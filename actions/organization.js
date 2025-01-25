@@ -46,29 +46,28 @@ export async function getOrganization(slug) {
 
 export async function getOrganizationUsers(orgId) {
   const { userId } = auth();
-
   if (!userId) {
-    throw new Error("User not authenticated");
+    throw new Error("Unauthorized");
   }
 
   const user = await db.user.findUnique({
-    where: {
-      clerkUserId: userId,
-    },
+    where: { clerkUserId: userId },
   });
 
   if (!user) {
     throw new Error("User not found");
   }
 
-  const { data: membership } =
+  const organizationMemberships =
     await clerkClient().organizations.getOrganizationMembershipList({
       organizationId: orgId,
     });
+  console.log("Organization Memberships:", organizationMemberships);
 
   const userIds = organizationMemberships.data.map(
-    (member) => member.publicUserData.userId
+    (membership) => membership.publicUserData.userId
   );
+  console.log("Extracted User IDs:", userIds);
 
   const users = await db.user.findMany({
     where: {
@@ -77,6 +76,11 @@ export async function getOrganizationUsers(orgId) {
       },
     },
   });
+  console.log("Fetched users from DB:", users);
+
+  if (!users.length) {
+    console.log("No users found for the given organization.");
+  }
 
   return users;
 }

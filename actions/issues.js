@@ -10,7 +10,7 @@ export async function createIssue(projectId, data) {
     throw new Error("User not authenticated");
   }
 
-  let user = await db.user.finUnique({
+  let user = await db.user.findUnique({
     where: { clerkUserId: userId },
   });
 
