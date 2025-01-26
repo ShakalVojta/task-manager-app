@@ -8,7 +8,11 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import IssueCreationDrawer from "./create-issue";
 import useFetch from "@/hooks/use-fetch";
-import { getIssuesForSprint, updateIssueOrder, updateIssueOrderFn } from "@/actions/issues";
+import {
+  getIssuesForSprint,
+  updateIssueOrder,
+  updateIssueOrderFn,
+} from "@/actions/issues";
 import { BarLoader } from "react-spinners";
 import IssueCard from "@/components/issue-card";
 import { toast } from "sonner";
@@ -56,7 +60,7 @@ const SprintBoard = ({ sprints, projectId, orgId }) => {
   const {
     fn: updateIssueOrderFn,
     loading: updateIssuesLoading,
-    error: updateIssuesError
+    error: updateIssuesError,
   } = useFetch(updateIssueOrder);
 
   const onDragEnd = async (result) => {
@@ -143,7 +147,7 @@ const SprintBoard = ({ sprints, projectId, orgId }) => {
         <p className="text-red-500 mt-2">{updateIssuesError}</p>
       )}
       {(updateIssuesLoading || issuesLoading) && (
-        <BarLoader className="mt-4" width={"100%"} color="#36d7b7"/>
+        <BarLoader className="mt-4" width={"100%"} color="#36d7b7" />
       )}
 
       <DragDropContext onDragEnd={onDragEnd}>
@@ -176,7 +180,20 @@ const SprintBoard = ({ sprints, projectId, orgId }) => {
                               {...provided.draggableProps}
                               {...provided.dragHandleProps}
                             >
-                              <IssueCard issue={issue} />
+                              <IssueCard
+                                issue={issue}
+                                onDelete={() => fetchIssues(currentSprint.id)}
+                                onUpdate={(updated) =>
+                                  setIssues((issues) =>
+                                    issues.map((issue) => {
+                                      if (issue.id === updated.id)
+                                        return updated;
+
+                                      return issue;
+                                    })
+                                  )
+                                }
+                              />
                             </div>
                           );
                         }}
