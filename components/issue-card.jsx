@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Card,
   CardContent,
@@ -23,13 +23,16 @@ const IssueCard = ({
   onDelete = () => {},
   onUpdate = () => {},
 }) => {
+
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+
   const created = formatDistanceToNow(new Date(issue.createdAt), {
     addSuffix: true,
   });
   return (
     <>
       <Card className="cursor-pointer hover:shadow-md transition-shadow">
-        <CardHeader>
+        <CardHeader className={`border-t-2 ${priorotyColor[issue.priority]} rounded-lg`}>
           <CardTitle>{issue.title}</CardTitle>
         </CardHeader>
         <CardContent className="flex gap-2 -mt-3">
@@ -44,6 +47,8 @@ const IssueCard = ({
           <div className="text-xs text-gray-400 w-full">Created {created}</div>
         </CardFooter>
       </Card>
+
+      {isDialogOpen && <></>}
     </>
   );
 };
