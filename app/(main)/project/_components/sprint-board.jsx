@@ -16,6 +16,7 @@ import {
 import { BarLoader } from "react-spinners";
 import IssueCard from "@/components/issue-card";
 import { toast } from "sonner";
+import BoardFilters from "./board-filters";
 
 const reorder = (list, startIndex, endIndex) => {
   const result = Array.from(list);
@@ -52,6 +53,10 @@ const SprintBoard = ({ sprints, projectId, orgId }) => {
   }, [currentSprint.id]);
 
   const [filteredIssues, setFilteredIssues] = useState(issues);
+
+  const handleFilterChange = (newFilteredIssues) => {
+    setFilteredIssues(newFilteredIssues);
+  }
 
   const handleIssueCreated = () => {
     fetchIssues(currentSprint.id);
@@ -107,20 +112,20 @@ const SprintBoard = ({ sprints, projectId, orgId }) => {
         card.order = i;
       });
     } else {
-      // remove card from the source list
+      // remove 
       const [movedCard] = sourceList.splice(source.index, 1);
 
-      // assign the new list id to the moved card
+      // assign 
       movedCard.status = destination.droppableId;
 
-      // add new card to the destination list
+      // add 
       destinationList.splice(destination.index, 0, movedCard);
 
       sourceList.forEach((card, i) => {
         card.order = i;
       });
 
-      // update the order for each card in destination list
+      // update 
       destinationList.forEach((card, i) => {
         card.order = i;
       });
@@ -143,6 +148,10 @@ const SprintBoard = ({ sprints, projectId, orgId }) => {
         projectId={projectId}
       />
 
+      {issues && !issuesLoading && (
+        <BoardFilters issues={issues} onFilterChange={handleFilterChange}/>
+      )}
+
       {updateIssuesError && (
         <p className="text-red-500 mt-2">{updateIssuesError}</p>
       )}
@@ -164,7 +173,7 @@ const SprintBoard = ({ sprints, projectId, orgId }) => {
                     {column.name}
                   </h3>
 
-                  {issues
+                  {filteredIssues
                     ?.filter((issue) => issue.status === column.key)
                     .map((issue, index) => (
                       <Draggable
